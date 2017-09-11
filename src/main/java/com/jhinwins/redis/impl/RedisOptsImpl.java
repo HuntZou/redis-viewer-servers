@@ -3,7 +3,6 @@ package com.jhinwins.redis.impl;
 import com.jhinwins.domain.RedisConnCfg;
 import com.jhinwins.redis.RedisOpts;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.ScanResult;
 import redis.clients.jedis.Tuple;
 
 import java.util.*;
@@ -52,7 +51,7 @@ public class RedisOptsImpl implements RedisOpts {
     @Override
     public Set<String> getKeys(String match) {
         Set<String> keys = jedis.keys(match);
-        jedis.close();
+        releaseResource();
         return keys;
     }
 
@@ -65,7 +64,7 @@ public class RedisOptsImpl implements RedisOpts {
             map.put(key, type);
         }
 
-        jedis.close();
+        releaseResource();
         return map;
     }
 
@@ -75,7 +74,7 @@ public class RedisOptsImpl implements RedisOpts {
     @Override
     public String getStringValueByKey(String key) {
         String result = jedis.get(key);
-        jedis.close();
+        releaseResource();
         return result;
     }
 
@@ -86,19 +85,18 @@ public class RedisOptsImpl implements RedisOpts {
         for (int i = 0; i < lrange.size(); i++) {
             map.put(i, lrange.get(i));
         }
-        jedis.close();
+        releaseResource();
         return map;
     }
 
     @Override
-    public Map<Double, String> getZsetValueByKey(String key, int cursor) {
-        ScanResult<Tuple> zscan = jedis.zscan(key, cursor);
-        List<Tuple> result = zscan.getResult();
+    public Map<Double, String> getZsetValueByKey(String key) {
+        Set<Tuple> result = jedis.zrangeWithScores(key, 0, -1);
         Map<Double, String> map = new HashMap<>();
         for (Tuple tuple : result) {
             map.put(tuple.getScore(), tuple.getElement());
         }
-        jedis.close();
+        releaseResource();
         return map;
     }
 
@@ -110,14 +108,14 @@ public class RedisOptsImpl implements RedisOpts {
         for (int i = 0; i < smembers.size(); i++) {
             map.put(i, iterator.next());
         }
-        jedis.close();
+        releaseResource();
         return map;
     }
 
     @Override
     public Map<String, String> getHashValueByKey(String key) {
         Map<String, String> stringStringMap = jedis.hgetAll(key);
-        jedis.close();
+        releaseResource();
         return stringStringMap;
     }
 }

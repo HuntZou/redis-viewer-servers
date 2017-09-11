@@ -25,7 +25,7 @@ public interface RedisOpts {
 
     Map<Integer, String> getListValueByKey(String key, long start, long stop);
 
-    Map<Double, String> getZsetValueByKey(String key, int cursor);
+    Map<Double, String> getZsetValueByKey(String key);
 
     Map<Integer, String> getSetValueByKey(String key);
 

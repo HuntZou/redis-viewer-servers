@@ -65,8 +65,8 @@ public class RedisController {
     }
 
     @PostMapping("getZsetValueByKey")
-    public String getZsetValueByKey(RedisConnCfg redisConnCfg, @RequestParam(value = "key") String key, @RequestParam(value = "start", defaultValue = "0", required = false) int cursor) {
-        Map<Double, String> zsetValue = RedisOpts.getJedis(redisConnCfg).getZsetValueByKey(key, cursor);
+    public String getZsetValueByKey(RedisConnCfg redisConnCfg, @RequestParam(value = "key") String key) {
+        Map<Double, String> zsetValue = RedisOpts.getJedis(redisConnCfg).getZsetValueByKey(key);
         return JsonRespUtils.createSucResp(zsetValue).toString();
     }
 
